@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="departure_station_hint">Станция отправления</string>
+    <string name="arrival_station_hint">Станция прибытия</string>
+    <string name="check_connection">Проверьте интернет-соединение</string>
+    <string name="today">Сегодня</string>
+    <string name="tomorrow">Завтра</string>
+    <string name="pick_date">Выбрать дату</string>
+    <string name="train_price_template">Цена: %s ₽</string>
+    <string name="train_dep_time_template">Отправление в %s</string>
+    <string name="train_arr_time_template">Прибытие в %s</string>
+    <string name="wicket_desc">На стации есть валидаторы для электронных билетов</string>
+</resources>

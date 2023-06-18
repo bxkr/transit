@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name" translatable="false">Transit</string>
+    <string name="departure_station_hint">Departure station</string>
+    <string name="arrival_station_hint">Arrival station</string>
+    <string name="check_connection">Check internet connection</string>
+    <string name="retrofit_error" translatable="false">Retrofit error: %s!</string>
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="pick_date">Pick a date</string>
+    <string name="train_number_template" translatable="false">№ %s</string>
+    <string name="train_route_template" translatable="false">%s - %s</string>
+    <string name="train_price_template">Price: %s ₽</string>
+    <string name="train_dep_time_template">Departure at %s</string>
+    <string name="train_arr_time_template">Arrival at %s</string>
+    <string name="wicket_desc">Station has validators for e-tickets</string>
+</resources>

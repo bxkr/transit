@@ -1,0 +1,6 @@
+<resources>
+
+    <style name="Base.Theme.Transit" parent="Theme.Material3.DynamicColors.DayNight" />
+
+    <style name="Theme.Transit" parent="Base.Theme.Transit" />
+</resources>
