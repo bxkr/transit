@@ -3,10 +3,12 @@ package org.bxkr.transit
 import org.bxkr.transit.models.SearchStation
 import org.bxkr.transit.models.DateTravel
 import org.bxkr.transit.models.TrainCategory
+import org.bxkr.transit.models.TripSchedule
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 object NetworkService {
@@ -22,13 +24,19 @@ object NetworkService {
 
         @GET("/train-schedule/date-travel")
         fun dateTravel(
-            @Query("date") date: String,
+            @Query("date") date: String, // format "yyyy-MM-dd"
             @Query("fromStationId") fromStationId: Long,
             @Query("toStationId") toStationId: Long
         ): Call<List<DateTravel>>
 
         @GET("/train-schedule/train-category")
         fun trainCategory(): Call<List<TrainCategory>>
+
+        @GET("/train-schedule/schedule/{id}")
+        fun tripSchedule(
+            @Path("id") scheduleId: Long,
+            @Query("date") date: String // format "yyyy-MM-dd"
+        ): Call<TripSchedule>
     }
 
     fun api(): API {

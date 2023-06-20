@@ -10,4 +10,6 @@
     <string name="train_dep_time_template">Отправление в %s</string>
     <string name="train_arr_time_template">Прибытие в %s</string>
     <string name="wicket_desc">На стации есть валидаторы для электронных билетов</string>
+    <string name="train_fragment_title">Поезд № %s</string>
+    <string name="start_finish">Старт/финиш</string>
 </resources>
