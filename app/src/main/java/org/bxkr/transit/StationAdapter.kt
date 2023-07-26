@@ -6,11 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.view.setPadding
 import androidx.recyclerview.widget.RecyclerView
 import org.bxkr.transit.databinding.ItemStationBinding
 import org.bxkr.transit.models.Stop
 import org.bxkr.transit.models.TripSchedule
 import java.text.SimpleDateFormat
+import kotlin.math.roundToInt
 
 class StationAdapter(
     private val context: MainActivity, private val schedule: TripSchedule,
@@ -40,22 +42,11 @@ class StationAdapter(
             binding.stopTime.text = parseFormat.parse(stop.departureTime)
                 ?.let { formatFormat.format(it) }
             if (stop.skip) {
-                binding.stopTime.visibility = View.INVISIBLE
+                binding.stopTime.visibility = View.GONE
             } else {
                 binding.stopTime.visibility = View.VISIBLE
             }
             if (stop.skip && index in departureStationIndex until arrivalStationIndex + 1) {
-                binding.borderView.background = AppCompatResources.getDrawable(context, R.drawable.stop_borders)
-            } else {
-                binding.borderView.background = null
-            }
-            if (stop.skip || index !in departureStationIndex until arrivalStationIndex + 1) {
-                binding.stationName.alpha = .5f
-                binding.stopTime.alpha = .5f
-                binding.root.setCardBackgroundColor(Color.TRANSPARENT)
-            } else {
-                binding.stopTime.alpha = 1f
-                binding.stationName.alpha = 1f
                 val attr = TypedValue()
                 context.theme.resolveAttribute(
                     com.google.android.material.R.attr.colorSurfaceVariant,
@@ -63,6 +54,26 @@ class StationAdapter(
                     true
                 )
                 binding.root.setCardBackgroundColor(attr.data)
+                binding.stationName.alpha = .3f
+            } else {
+                binding.root.alpha = 1f
+                binding.stationName.alpha = 1f
+            }
+            if (index !in departureStationIndex until arrivalStationIndex + 1) {
+                binding.root.alpha = .5f
+                binding.root.setCardBackgroundColor(Color.TRANSPARENT)
+            } else {
+                binding.root.alpha = 1f
+                if (!stop.skip) {
+                    binding.root.alpha = 1f
+                    val attr = TypedValue()
+                    context.theme.resolveAttribute(
+                        com.google.android.material.R.attr.colorSurfaceVariant,
+                        attr,
+                        true
+                    )
+                    binding.root.setCardBackgroundColor(attr.data)
+                }
             }
             if (stop.station.hasWicket) {
                 binding.stationName.setCompoundDrawablesRelativeWithIntrinsicBounds(
@@ -76,7 +87,8 @@ class StationAdapter(
             }
             binding.root.shapeAppearanceModel =
                 binding.root.shapeAppearanceModel.toBuilder().setAllCornerSizes(0f).build()
-            binding.imageView.visibility = View.INVISIBLE
+            binding.imageView.setPadding(0)
+            binding.imageView.setImageDrawable(null)
             if (index == departureStationIndex) {
                 binding.imageView.setImageDrawable(
                     AppCompatResources.getDrawable(
@@ -84,7 +96,7 @@ class StationAdapter(
                         R.drawable.ic_round_outlined_flag_24
                     )
                 )
-                binding.imageView.visibility = View.VISIBLE
+                binding.imageView.setPadding(8.dp.roundToInt())
                 binding.root.shapeAppearanceModel =
                     binding.root.shapeAppearanceModel.toBuilder().apply {
                         setTopLeftCornerSize(12.dp)
@@ -98,7 +110,7 @@ class StationAdapter(
                         R.drawable.ic_round_flag_circle_24
                     )
                 )
-                binding.imageView.visibility = View.VISIBLE
+                binding.imageView.setPadding(8.dp.roundToInt())
                 binding.root.shapeAppearanceModel =
                     binding.root.shapeAppearanceModel.toBuilder().apply {
                         setBottomLeftCornerSize(12.dp)
