@@ -105,9 +105,9 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         binding.tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 when (tab?.text) {
-                    getString(R.string.pick_date) -> showDatePickerDialog()
+                    getString(R.string.pick_date) -> showDatePickerDialog { search() }
+                    else -> search()
                 }
-                search()
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
@@ -133,13 +133,14 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         }
     }
 
-    fun showDatePickerDialog() {
+    fun showDatePickerDialog(onResult: () -> Unit) {
         val newFragment = DatePickerFragment { year, month, day ->
             val format = SimpleDateFormat("dd MMM yyyy", resources.configuration.locales[0])
             val decodeFormat = SimpleDateFormat("dd-MM-yyyy", resources.configuration.locales[0])
             binding.tabLayout.getTabAt(2)?.text =
                 decodeFormat.parse("$day-${month + 1}-$year")?.let { format.format(it) }
             datePicked = "$year-${month + 1}-$day"
+            onResult()
         }
         newFragment.show(requireActivity().supportFragmentManager, "datePicker")
     }
