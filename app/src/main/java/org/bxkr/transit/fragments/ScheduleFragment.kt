@@ -14,12 +14,11 @@ import org.bxkr.transit.NetworkService
 import org.bxkr.transit.R
 import org.bxkr.transit.TrainAdapter
 import org.bxkr.transit.databinding.FragmentScheduleBinding
-import org.bxkr.transit.models.SearchStation
 import org.bxkr.transit.models.DateTravel
+import org.bxkr.transit.models.SearchStation
 import org.bxkr.transit.models.TrainCategory
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Locale
 
 class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleBinding::inflate) {
     private var verifiedDepartureStation = false
@@ -31,6 +30,7 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
     private var latestSuggestions = listOf<SearchStation>()
     private var latestSuggestionsStrings = listOf<String>()
     private var datePicked = String()
+    private var doNotListen = false
 
     private enum class SearchField {
         Departure, Arrival
@@ -47,6 +47,7 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
                         depId = latestSuggestions.first { it.name == text }.id
                         if (verifiedArrivalStation) search()
                     }
+
                     SearchField.Arrival -> {
                         verifiedArrivalStation = true
                         latestVerifiedArrivalStation = text
@@ -65,21 +66,31 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
                 parentContext = activity as MainActivity,
                 bindingRoot = binding.root,
                 function = {
-                    latestSuggestionsStrings = it.body()!!.map { it1 -> it1.name}
+                    latestSuggestionsStrings = it.body()!!.map { it1 -> it1.name }
                     latestSuggestions = it.body()!!
                     val searchField: AutoCompleteTextView = when (field) {
                         SearchField.Departure -> binding.departureStationSearch
                         SearchField.Arrival -> binding.arrivalStationSearch
                     }
-                    searchField.setAdapter(ArrayAdapter(activity as MainActivity, android.R.layout.select_dialog_item, latestSuggestionsStrings))
+                    searchField.setAdapter(
+                        ArrayAdapter(
+                            activity as MainActivity,
+                            android.R.layout.select_dialog_item,
+                            latestSuggestionsStrings
+                        )
+                    )
                 }
             ) {})
         }
         binding.departureStationSearch.doOnTextChanged { text, _, _, _ ->
-            onSearchChange(text.toString(), SearchField.Departure)
+            if (!doNotListen) {
+                onSearchChange(text.toString(), SearchField.Departure)
+            }
         }
         binding.arrivalStationSearch.doOnTextChanged { text, _, _, _ ->
-            onSearchChange(text.toString(), SearchField.Arrival)
+            if (!doNotListen) {
+                onSearchChange(text.toString(), SearchField.Arrival)
+            }
         }
         binding.departureStationSearch.setOnFocusChangeListener { view1, b ->
             if (!b) {
@@ -109,14 +120,26 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
                 // reselect
             }
         })
+        binding.swapButton.setOnClickListener {
+            doNotListen = true
+            binding.arrivalStationSearch.setText(latestVerifiedDepartureStation)
+            binding.departureStationSearch.setText(latestVerifiedArrivalStation)
+            depId = arrId.also { arrId = depId }
+            latestVerifiedDepartureStation = latestVerifiedArrivalStation.also {
+                latestVerifiedArrivalStation = latestVerifiedDepartureStation
+            }
+            search()
+            doNotListen = false
+        }
     }
 
     fun showDatePickerDialog() {
         val newFragment = DatePickerFragment { year, month, day ->
             val format = SimpleDateFormat("dd MMM yyyy", resources.configuration.locales[0])
             val decodeFormat = SimpleDateFormat("dd-MM-yyyy", resources.configuration.locales[0])
-            binding.tabLayout.getTabAt(2)?.text = decodeFormat.parse("$day-${month+1}-$year")?.let { format.format(it) }
-            datePicked = "$year-${month+1}-$day"
+            binding.tabLayout.getTabAt(2)?.text =
+                decodeFormat.parse("$day-${month + 1}-$year")?.let { format.format(it) }
+            datePicked = "$year-${month + 1}-$day"
         }
         newFragment.show(requireActivity().supportFragmentManager, "datePicker")
     }
@@ -125,10 +148,24 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         binding.travels.visibility = View.GONE
         val calendar = Calendar.getInstance()
         val date = when (binding.tabLayout.selectedTabPosition) {
-            0 -> "${calendar.get(Calendar.YEAR)}-${calendar.get(Calendar.MONTH)+1}-${calendar.get(Calendar.DAY_OF_MONTH)}"
-            1 -> "${calendar.get(Calendar.YEAR)}-${calendar.get(Calendar.MONTH)+1}-${calendar.get(Calendar.DAY_OF_MONTH)+1}"
+            0 -> "${calendar.get(Calendar.YEAR)}-${calendar.get(Calendar.MONTH) + 1}-${
+                calendar.get(
+                    Calendar.DAY_OF_MONTH
+                )
+            }"
+
+            1 -> "${calendar.get(Calendar.YEAR)}-${calendar.get(Calendar.MONTH) + 1}-${
+                calendar.get(
+                    Calendar.DAY_OF_MONTH
+                ) + 1
+            }"
+
             2 -> datePicked
-            else -> "${calendar.get(Calendar.YEAR)}-${calendar.get(Calendar.MONTH)+1}-${calendar.get(Calendar.DAY_OF_MONTH)}" // today
+            else -> "${calendar.get(Calendar.YEAR)}-${calendar.get(Calendar.MONTH) + 1}-${
+                calendar.get(
+                    Calendar.DAY_OF_MONTH
+                )
+            }" // today
         }
         val categoryCall = NetworkService.api().trainCategory()
         categoryCall.enqueue(object : BaseCallback<List<TrainCategory>>(
@@ -143,7 +180,8 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
                             binding.tabLayout.visibility = View.VISIBLE
                             binding.travels.visibility = View.VISIBLE
                             binding.travels.layoutManager = LinearLayoutManager(requireContext())
-                            binding.travels.adapter = TrainAdapter(activity as MainActivity, it1.body()!!, categories)
+                            binding.travels.adapter =
+                                TrainAdapter(activity as MainActivity, it1.body()!!, categories)
                         }
                     }
                 ) {})

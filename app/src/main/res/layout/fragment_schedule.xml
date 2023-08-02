@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,51 +10,69 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/departure_station_search_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="36dp"
-            android:layout_marginTop="32dp"
-            android:hint="@string/departure_station_hint"
-            android:labelFor="@id/departure_station_search"
-            app:boxCornerRadiusBottomEnd="32dp"
-            app:boxCornerRadiusBottomStart="32dp"
-            app:boxCornerRadiusTopEnd="32dp"
-            app:boxCornerRadiusTopStart="32dp">
-
-            <AutoCompleteTextView
-                android:inputType="text"
-                android:id="@+id/departure_station_search"
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_toStartOf="@id/swapButton"
+                android:id="@+id/departure_station_search_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:imeOptions="actionNext"
-                android:padding="20dp" />
+                android:layout_marginStart="36dp"
+                android:layout_marginTop="32dp"
+                android:hint="@string/departure_station_hint"
+                android:labelFor="@id/departure_station_search"
+                app:boxCornerRadiusBottomEnd="32dp"
+                app:boxCornerRadiusBottomStart="32dp"
+                app:boxCornerRadiusTopEnd="32dp"
+                app:boxCornerRadiusTopStart="32dp">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <AutoCompleteTextView
+                    android:inputType="text|textNoSuggestions"
+                    android:id="@+id/departure_station_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:padding="20dp" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/arrival_station_search_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="36dp"
-            android:layout_marginBottom="32dp"
-            android:hint="@string/arrival_station_hint"
-            android:labelFor="@id/arrival_station_search"
-            app:boxCornerRadiusBottomEnd="32dp"
-            app:boxCornerRadiusBottomStart="32dp"
-            app:boxCornerRadiusTopEnd="32dp"
-            app:boxCornerRadiusTopStart="32dp">
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <AutoCompleteTextView
-                android:inputType="text"
-                android:id="@+id/arrival_station_search"
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_toStartOf="@id/swapButton"
+                android:id="@+id/arrival_station_search_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:imeOptions="actionDone"
-                android:padding="20dp" />
+                android:layout_marginStart="36dp"
+                android:layout_marginBottom="32dp"
+                android:hint="@string/arrival_station_hint"
+                android:labelFor="@id/arrival_station_search"
+                android:layout_below="@id/departure_station_search_layout"
+                app:boxCornerRadiusBottomEnd="32dp"
+                app:boxCornerRadiusBottomStart="32dp"
+                app:boxCornerRadiusTopEnd="32dp"
+                app:boxCornerRadiusTopStart="32dp">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <AutoCompleteTextView
+                    android:inputType="text|textNoSuggestions"
+                    android:id="@+id/arrival_station_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionDone"
+                    android:padding="20dp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                style="?attr/materialIconButtonOutlinedStyle"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:id="@+id/swapButton"
+                android:layout_marginEnd="24dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/ic_round_swap_vert_24"
+                />
+        </RelativeLayout>
 
         <com.google.android.material.tabs.TabLayout
             android:visibility="gone"
@@ -76,12 +95,13 @@
                 android:layout_height="wrap_content"
                 android:text="@string/pick_date" />
         </com.google.android.material.tabs.TabLayout>
-        
+
         <androidx.recyclerview.widget.RecyclerView
-            android:padding="16dp"
-            android:clipToPadding="false"
             android:id="@+id/travels"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:padding="16dp"
+            tools:listitem="@layout/item_train" />
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
